@@ -1,13 +1,9 @@
 import React, {useState, useEffect} from 'react'
-import { db } from '../firebase'
+import { db, auth } from '../firebase'
 import SendMessage from './SendMessage'
+import Logout from './Logout'
 
-const styles = {
-    chat: {
-        textAlign: 'center'
-    }
-    
-}
+
  function ChatComp(){
     const [messages, setMessages] = useState([])
     useEffect(() => {
@@ -15,22 +11,21 @@ const styles = {
             setMessages(snapshot.docs.map(doc => doc.data()))
         })
     }, [])
-    return(
-        <div style = {styles.chat}>
-    <h1>Hello! This is chat</h1>
-    <SendMessage/>
-<div>{messages.map(({ id, text}) => (
+    return (
+        <div>
+            <Logout />
+            <div>
+                {messages.map(({ id, text, photoURL, uid }) => (
                     <div>
-                        <div key={id} >
-                           
-                            <h5>{text}</h5>
+                        <div key={id} className={`msg ${uid === auth.currentUser.uid ? 'sent' : 'received'}`}>
+                            <img src={photoURL} alt="" />
+                            <p>{text}</p>
                         </div>
                     </div>
-                    
                 ))}
-            </div></div>
-   
-   
+            </div>
+            <SendMessage/>
+        </div>
     )
 }
 
